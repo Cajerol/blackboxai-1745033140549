@@ -1,0 +1,19 @@
+/* Tailwind CSS v3.3.2 - Full build */
+/* This is a placeholder. In a real environment, you would download the full Tailwind CSS build from the official source or build it yourself. */
+/* For demonstration, I will include the CDN link content here as a placeholder. */
+/* Please replace this content with the actual Tailwind CSS build file content. */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom colors and fonts as per tailwind.config in venta.html */
+:root {
+  --color-corona-gold: #FFD700;
+  --color-corona-yellow: #FFC72C;
+  --color-corona-dark: #2C2C2C;
+  --font-sans: 'Inter', sans-serif;
+}
+
+/* Extend Tailwind with custom colors and fonts */
+/* This requires Tailwind to be built with this config, so for now, this is a placeholder */
