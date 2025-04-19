@@ -1,7 +1,8 @@
 [
   {
-    "name": "Test User",
-    "email": "test@test.com",
-    "password": "test123"
+    "name": "Admin Corona",
+    "email": "admin@corona.com",
+    "role": "Administrador",
+    "password": "admin123"
   }
 ]
