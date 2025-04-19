@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Corona POS - Login</title>
+  <script>
+    // Initialize test data
+    const testInventory = [
+      {
+        barcode: '7501234567890',
+        name: 'Corona Extra 355ml',
+        quantity: 100,
+        price: 5.50
+      },
+      {
+        barcode: '7501234567891',
+        name: 'Corona Light 355ml',
+        quantity: 50,
+        price: 5.50
+      },
+      {
+        barcode: '7501234567892',
+        name: 'Cerveza Victoria',
+        quantity: 75,
+        price: 5.00
+      }
+    ];
+
+    // Clear existing data
+    localStorage.clear();
+
+    // Set test data
+    localStorage.setItem('currentUser', JSON.stringify({
+      name: "Test User",
+      email: "test@test.com"
+    }));
+    localStorage.setItem('inventory', JSON.stringify(testInventory));
+
+    // Verify data was set correctly
+    const savedInventory = JSON.parse(localStorage.getItem('inventory'));
+    console.log('Test inventory initialized:', JSON.stringify(savedInventory, null, 2));
+
+    // Wait a moment to ensure data is saved before redirecting
+    setTimeout(() => {
+      window.location.href = 'venta.html';
+    }, 100);
+  </script>
+</head>
+<body>
+  Redirigiendo...
+</body>
+</html>
