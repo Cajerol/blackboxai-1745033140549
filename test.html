@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test localStorage</title>
+    <style>
+        pre { background: #f5f5f5; padding: 10px; }
+        button { margin: 10px 0; padding: 5px 10px; }
+    </style>
+</head>
+<body>
+    <h1>Test localStorage</h1>
+    <button onclick="resetInventory()">Reset Inventory</button>
+    <h2>Current Inventory:</h2>
+    <pre id="inventory-output"></pre>
+    
+    <h2>Test Barcode Lookup:</h2>
+    <input type="text" id="test-barcode" value="7501234567890">
+    <button onclick="testLookup()">Test Lookup</button>
+    <pre id="lookup-output"></pre>
+
+    <script>
+        function displayInventory() {
+            const inventory = JSON.parse(localStorage.getItem('inventory') || '[]');
+            document.getElementById('inventory-output').textContent = 
+                JSON.stringify(inventory, null, 2);
+        }
+
+        function resetInventory() {
+            // Clear localStorage
+            localStorage.clear();
+            
+            // Add test product
+            const inventory = [{
+                barcode: '7501234567890',
+                name: 'Corona Extra 355ml',
+                quantity: 100,
+                price: 5.50
+            }];
+            
+            // Save to localStorage
+            localStorage.setItem('inventory', JSON.stringify(inventory));
+            console.log('Reset inventory:', inventory);
+            
+            // Update display
+            displayInventory();
+        }
+
+        function testLookup() {
+            const barcode = document.getElementById('test-barcode').value;
+            const inventory = JSON.parse(localStorage.getItem('inventory') || '[]');
+            
+            console.log('Testing barcode:', barcode);
+            console.log('Current inventory:', inventory);
+            
+            const product = inventory.find(item => {
+                console.log('Comparing:', item.barcode, barcode, item.barcode === barcode);
+                return item.barcode === barcode;
+            });
+            
+            document.getElementById('lookup-output').textContent = 
+                product ? `Found: ${JSON.stringify(product, null, 2)}` : 'Product not found';
+            
+            console.log('Lookup result:', product);
+        }
+
+        // Initialize display
+        displayInventory();
+    </script>
+</body>
+</html>
