@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Storage Test</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        button { padding: 10px; margin: 5px; }
+        pre { background: #f5f5f5; padding: 10px; }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+        }
+        .modal.show { display: flex; }
+        .modal-content {
+            background: white;
+            padding: 30px;
+            margin: auto;
+            border-radius: 8px;
+            min-width: 350px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        input { 
+            padding: 15px;
+            margin: 20px 0;
+            width: 100%;
+            box-sizing: border-box;
+            font-size: 18px;
+            text-align: center;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+        }
+        .button-group { 
+            margin-top: 20px;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+        .submit-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 18px;
+            width: 150px;
+            height: 60px;
+            transition: background-color 0.2s;
+        }
+        .submit-btn:hover {
+            background: #45a049;
+        }
+        .cancel-btn {
+            background: #f44336;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 18px;
+            width: 150px;
+            height: 60px;
+            transition: background-color 0.2s;
+        }
+        .cancel-btn:hover {
+            background: #da190b;
+        }
+        .action-btn {
+            background: #2196F3;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.2s;
+        }
+        .action-btn:hover {
+            background: #1976D2;
+        }
+        h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <h1>Storage Test</h1>
+    
+    <button class="action-btn" onclick="resetStorage()">Reset Storage</button>
+    <button class="action-btn" onclick="showScanner()">Scan Barcode</button>
+    <button class="action-btn" onclick="showStorage()">Show Storage</button>
+    
+    <div id="scanner-modal" class="modal">
+        <div class="modal-content">
+            <h2>Scan Barcode</h2>
+            <form id="scanner-form" onsubmit="handleSubmit(event)">
+                <input type="text" 
+                       id="barcode-input" 
+                       name="barcode"
+                       placeholder="Enter barcode..." 
+                       autocomplete="off">
+                <div class="button-group">
+                    <button type="submit" class="submit-btn">
+                        Submit
+                    </button>
+                    <button type="button" class="cancel-btn" onclick="hideScanner()">
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <h2>Output:</h2>
+    <pre id="output"></pre>
+
+    <script>
+        console.log('Script loaded');
+
+        const modal = document.getElementById('scanner-modal');
+        const barcodeInput = document.getElementById('barcode-input');
+        const scannerForm = document.getElementById('scanner-form');
+
+        function log(msg) {
+            console.log(msg);
+            const output = document.getElementById('output');
+            const timestamp = new Date().toISOString();
+            const logMsg = `${timestamp}: ${msg}`;
+            output.textContent = logMsg + '\n' + output.textContent;
+        }
+
+        function resetStorage() {
+            console.log('Reset storage clicked');
+            try {
+                localStorage.clear();
+                log('Cleared localStorage');
+
+                const testProduct = {
+                    barcode: '7501234567890',
+                    name: 'Corona Extra 355ml',
+                    quantity: 100,
+                    price: 5.50
+                };
+
+                localStorage.setItem('inventory', JSON.stringify([testProduct]));
+                log('Added test product to inventory');
+                
+                showStorage();
+            } catch (error) {
+                log('ERROR: ' + error.message);
+            }
+        }
+
+        function showScanner() {
+            console.log('Show scanner clicked');
+            modal.classList.add('show');
+            barcodeInput.value = '';
+            setTimeout(() => {
+                barcodeInput.focus();
+            }, 100);
+            log('Scanner opened');
+        }
+
+        function hideScanner() {
+            console.log('Hide scanner called');
+            modal.classList.remove('show');
+            log('Scanner closed');
+        }
+
+        function showStorage() {
+            console.log('Show storage clicked');
+            try {
+                const inventory = JSON.parse(localStorage.getItem('inventory') || '[]');
+                const cart = JSON.parse(localStorage.getItem('currentCart') || '[]');
+                const sales = JSON.parse(localStorage.getItem('sales') || '[]');
+
+                log('Current localStorage state:');
+                log('- Inventory: ' + JSON.stringify(inventory));
+                log('- Cart: ' + JSON.stringify(cart));
+                log('- Sales: ' + JSON.stringify(sales));
+            } catch (error) {
+                log('ERROR: ' + error.message);
+            }
+        }
+
+        function handleSubmit(event) {
+            event.preventDefault();
+            console.log('Form submitted');
+            log('Form submitted');
+            
+            const barcode = barcodeInput.value.trim();
+            if (!barcode) {
+                log('No barcode entered');
+                alert('Please enter a barcode');
+                return;
+            }
+
+            log('Processing barcode: ' + barcode);
+
+            try {
+                const inventory = JSON.parse(localStorage.getItem('inventory') || '[]');
+                log('Current inventory: ' + JSON.stringify(inventory));
+
+                const product = inventory.find(item => {
+                    log('Comparing: ' + item.barcode + ' === ' + barcode);
+                    return item.barcode === barcode;
+                });
+
+                log('Found product: ' + JSON.stringify(product));
+
+                if (product) {
+                    hideScanner();
+                    alert('Found product: ' + product.name);
+                } else {
+                    alert('Product not found');
+                }
+            } catch (error) {
+                log('ERROR: ' + error.message);
+                alert('Error: ' + error.message);
+            }
+
+            barcodeInput.value = '';
+        }
+
+        // Handle modal background click
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                console.log('Modal background clicked');
+                hideScanner();
+            }
+        });
+
+        // Show initial state
+        log('Page loaded');
+        showStorage();
+    </script>
+</body>
+</html>
