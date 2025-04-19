@@ -4,33 +4,17 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Ventas - Corona POS</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            corona: {
-              gold: '#FFD700',
-              yellow: '#FFC72C',
-              dark: '#2C2C2C'
-            }
-          },
-          fontFamily: {
-            sans: ['Inter', 'sans-serif']
-          }
-        }
-      }
-    }
-  </script>
+  <link rel="stylesheet" href="css/fontawesome.css" />
+  <link href="css/google-fonts.css" rel="stylesheet" />
+  <link rel="stylesheet" href="css/venta.css" />
+  <!-- Removed Tailwind CDN script -->
+  <!-- Removed Tailwind config script because Tailwind is now local CSS -->
 </head>
 <body class="min-h-screen flex flex-col bg-gray-50">
   <header class="bg-corona-dark shadow-lg">
     <div class="container mx-auto px-4 py-3 flex justify-between items-center">
       <div class="flex items-center gap-4">
-        <img src="https://www.seekpng.com/png/full/362-3624266_corona-logo-png.png" alt="Corona Logo" class="h-12">
+        <img src="https://www.seekpng.com/png/full/362-3624266_corona-logo-png.png" alt="Corona Logo" class="h-12" />
         <h1 class="text-2xl font-bold text-white">Ventas</h1>
       </div>
       <nav class="flex items-center space-x-6">
@@ -42,14 +26,14 @@
     </div>
   </header>
 
-  <!-- Barcode Scanner Modal -->
+      <!-- Modal del Escáner de Código de Barras -->
   <div id="scanner-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
     <div class="bg-white rounded-lg p-8 max-w-md w-full mx-4">
-      <div class="text-center mb-6">
-        <i class="fas fa-barcode text-4xl text-corona-dark mb-4"></i>
-        <h3 class="text-xl font-bold text-corona-dark">Escáner de Código de Barras</h3>
-        <p class="text-gray-600 mt-2">Escanee el código de barras del producto</p>
-      </div>
+  <div class="text-center mb-6">
+    <i class="fas fa-barcode text-4xl text-corona-dark mb-4"></i>
+    <h3 class="text-xl font-bold text-corona-dark">Escáner de Código de Barras</h3>
+    <p class="text-gray-600 mt-2">Escanee el código de barras del producto</p>
+  </div>
       <div class="relative">
         <input type="text" id="barcode-input" 
           class="w-full px-4 py-2 border-2 border-corona-dark rounded focus:outline-none" 
@@ -64,14 +48,14 @@
     </div>
   </div>
 
-  <main class="flex-1 container mx-auto px-4 py-8">
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <!-- Product Selection -->
-      <div class="lg:col-span-2 bg-white rounded-lg shadow-md p-6">
+  <main class="flex-1 container mx-auto px-4 py-8 flex flex-col items-center justify-center">
+    <div class="bg-white rounded-lg shadow-md p-6 w-full max-w-4xl grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- Selección de Producto -->
+      <div class="lg:col-span-2">
         <h2 class="text-xl font-semibold mb-4 text-corona-dark flex items-center gap-2">
           <i class="fas fa-shopping-cart"></i> Agregar Producto
         </h2>
-        <!-- Search and Scan -->
+        <!-- Buscar y Escanear -->
         <div class="flex gap-4 mb-6">
           <div class="flex-1">
             <div class="flex gap-2">
@@ -89,7 +73,7 @@
           </button>
         </div>
 
-        <!-- Inventory Results -->
+        <!-- Resultados del Inventario -->
         <div id="search-results" class="mb-6 hidden">
           <div class="border border-gray-200 rounded-lg overflow-hidden">
             <table class="w-full text-left">
@@ -103,13 +87,13 @@
                 </tr>
               </thead>
               <tbody id="inventory-results" class="divide-y divide-gray-200 bg-white">
-                <!-- Results will be added here -->
+              <!-- Los resultados se agregarán aquí -->
               </tbody>
             </table>
           </div>
         </div>
 
-        <!-- Product Form -->
+        <!-- Formulario de Producto -->
         <form id="product-form" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end border-t border-gray-200 pt-6">
           <div>
             <label for="product-name" class="block text-gray-700 mb-1">Nombre</label>
@@ -123,7 +107,7 @@
             </div>
           </div>
           <div>
-            <label for="product-price" class="block text-gray-700 mb-1">Precio (S/.)</label>
+            <label for="product-price" class="block text-gray-700 mb-1">Precio (MXN)</label>
             <div class="relative">
               <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
                 <i class="fas fa-dollar-sign"></i>
@@ -162,21 +146,21 @@
               <thead class="bg-corona-dark text-white">
                 <tr>
                   <th class="px-4 py-2">Producto</th>
-                  <th class="px-4 py-2">Precio Unit.</th>
-                  <th class="px-4 py-2">Cant.</th>
+                  <th class="px-4 py-2">Precio Unitario</th>
+                  <th class="px-4 py-2">Cantidad</th>
                   <th class="px-4 py-2">Subtotal</th>
                   <th class="px-4 py-2">Acciones</th>
                 </tr>
               </thead>
               <tbody id="cart-items" class="divide-y divide-gray-200">
-                <!-- Items will be added here -->
+                <!-- Los items se agregarán aquí -->
               </tbody>
             </table>
           </div>
         </div>
       </div>
 
-      <!-- Order Summary -->
+      <!-- Resumen de la Venta -->
       <div class="lg:sticky lg:top-4">
         <div class="bg-white rounded-lg shadow-md p-6">
           <h2 class="text-xl font-semibold mb-4 text-corona-dark flex items-center gap-2">
@@ -186,7 +170,7 @@
             <div class="space-y-4 mb-6">
               <div class="flex justify-between items-center py-2 border-b border-gray-200">
                 <span class="text-gray-600">Subtotal:</span>
-                <span class="font-semibold">S/. <span id="subtotal-amount">0.00</span></span>
+                <span class="font-semibold">MXN <span id="subtotal-amount">0.00</span></span>
               </div>
               <div class="flex items-center justify-between py-2 border-b border-gray-200">
                 <div class="flex items-center gap-2">
@@ -196,11 +180,11 @@
                   </label>
                   <span class="text-gray-600">IGV (18%)</span>
                 </div>
-                <span class="font-semibold">S/. <span id="tax-amount">0.00</span></span>
+                <span class="font-semibold">MXN <span id="tax-amount">0.00</span></span>
               </div>
               <div class="flex justify-between items-center py-2 text-lg font-bold">
                 <span class="text-corona-dark">Total:</span>
-                <span class="text-corona-dark">S/. <span id="total-amount">0.00</span></span>
+                <span class="text-corona-dark">MXN <span id="total-amount">0.00</span></span>
               </div>
             </div>
             <button type="button" id="checkout-btn" class="w-full bg-corona-gold text-corona-dark font-semibold rounded px-6 py-4 hover:bg-corona-yellow transition disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-corona-gold">
@@ -212,7 +196,7 @@
     </div>
   </main>
 
-  <!-- Payment Method Modal -->
+  <!-- Modal de Método de Pago -->
   <div id="payment-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-[9999]" style="display: none;">
     <div class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg p-8 max-w-md w-full mx-4">
       <h3 class="text-xl font-bold text-corona-dark mb-6 text-center">Método de Pago</h3>
@@ -229,7 +213,7 @@
     </div>
   </div>
 
-  <!-- Receipt Modal -->
+  <!-- Modal de Recibo -->
   <div id="receipt-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
     <div class="bg-white rounded-lg p-8 max-w-md w-full mx-4">
       <div class="text-center mb-6">
@@ -250,7 +234,7 @@
   </div>
 
   <script>
-    // Get DOM elements
+    // Obtener elementos del DOM
     const productForm = document.getElementById('product-form');
     const cartItems = document.getElementById('cart-items');
     const subtotalAmount = document.getElementById('subtotal-amount');
@@ -276,39 +260,39 @@
     const cashPaymentBtn = document.getElementById('cash-payment');
     const cardPaymentBtn = document.getElementById('card-payment');
 
-    // Initialize cart
+    // Inicializar carrito
     let cart = JSON.parse(localStorage.getItem('currentCart') || '[]');
 
-    // Search inventory functionality
+    // Funcionalidad de búsqueda en inventario
     function searchInventory(e) {
       try {
         const searchTerm = document.getElementById('inventory-search').value.toLowerCase().trim();
-        console.log('Searching for:', searchTerm);
+        console.log('Buscando:', searchTerm);
         
         const inventoryStr = localStorage.getItem('inventory');
-        console.log('Raw inventory data:', inventoryStr);
+        console.log('Datos crudos de inventario:', inventoryStr);
         
         const inventory = JSON.parse(inventoryStr || '[]');
-        console.log('Parsed inventory:', JSON.stringify(inventory, null, 2));
+        console.log('Inventario parseado:', JSON.stringify(inventory, null, 2));
         
         const filteredInventory = inventory.filter(item => 
           item.name.toLowerCase().includes(searchTerm)
         );
-        console.log('Filtered inventory:', JSON.stringify(filteredInventory, null, 2));
+        console.log('Inventario filtrado:', JSON.stringify(filteredInventory, null, 2));
         
         displaySearchResults(filteredInventory);
       } catch (error) {
-        console.error('Error in searchInventory:', error);
+        console.error('Error en searchInventory:', error);
       }
     }
 
     function displaySearchResults(results) {
       try {
-        console.log('Displaying results:', JSON.stringify(results, null, 2));
+        console.log('Mostrando resultados:', JSON.stringify(results, null, 2));
         inventoryResults.innerHTML = '';
         
         if (!Array.isArray(results) || results.length === 0) {
-          console.log('No results found, hiding table');
+          console.log('No se encontraron resultados, ocultando tabla');
           searchResults.classList.add('hidden');
           return;
         }
@@ -320,7 +304,7 @@
             <td class="px-4 py-2">${item.name}</td>
             <td class="px-4 py-2">${item.barcode}</td>
             <td class="px-4 py-2">${item.quantity}</td>
-            <td class="px-4 py-2">S/. ${item.price.toFixed(2)}</td>
+            <td class="px-4 py-2">MXN ${item.price.toFixed(2)}</td>
             <td class="px-4 py-2 text-center">
               <button onclick="selectProduct('${item.barcode}')" 
                 class="text-corona-dark hover:text-corona-gold transition-colors duration-200">
@@ -331,10 +315,10 @@
           inventoryResults.appendChild(tr);
         });
 
-        console.log('Showing results table');
+        console.log('Mostrando tabla de resultados');
         searchResults.classList.remove('hidden');
       } catch (error) {
-        console.error('Error in displaySearchResults:', error);
+        console.error('Error en displaySearchResults:', error);
       }
     }
 
@@ -349,7 +333,7 @@
         productBarcode.value = product.barcode;
         productStock.value = product.quantity;
         
-        // Auto-submit if stock is available
+        // Enviar automáticamente si hay stock disponible
         if (product.quantity > 0) {
           productForm.dispatchEvent(new Event('submit'));
         } else {
@@ -358,12 +342,12 @@
       }
     }
 
-    // Initialize IGV toggle state and event listener
+    // Inicializar estado y evento del toggle IGV
     document.addEventListener('DOMContentLoaded', function() {
       const igvToggle = document.getElementById('igv-toggle');
       let igvEnabled = false;
 
-      // Add IGV toggle event listener
+      // Agregar evento al toggle IGV
       igvToggle.addEventListener('change', function() {
         igvEnabled = this.checked;
         const subtotal = parseFloat(subtotalAmount.textContent);
@@ -386,9 +370,9 @@
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td class="px-4 py-2 border-b border-gray-300">${item.name}</td>
-          <td class="px-4 py-2 border-b border-gray-300">S/. ${item.price.toFixed(2)}</td>
+          <td class="px-4 py-2 border-b border-gray-300">MXN ${item.price.toFixed(2)}</td>
           <td class="px-4 py-2 border-b border-gray-300">${item.quantity}</td>
-          <td class="px-4 py-2 border-b border-gray-300">S/. ${subtotal.toFixed(2)}</td>
+          <td class="px-4 py-2 border-b border-gray-300">MXN ${subtotal.toFixed(2)}</td>
           <td class="px-4 py-2 border-b border-gray-300 text-center">
             <button class="text-red-600 hover:text-red-800" onclick="removeItem(${index})" aria-label="Eliminar producto">
               <i class="fas fa-trash-alt"></i>
@@ -398,7 +382,7 @@
         cartItems.appendChild(tr);
       });
 
-      // Update summary
+      // Actualizar resumen
       const subtotal = total;
       const igvToggle = document.getElementById('igv-toggle');
       const tax = igvToggle.checked ? subtotal * 0.18 : 0;
@@ -408,7 +392,7 @@
       taxAmount.textContent = tax.toFixed(2);
       totalAmount.textContent = finalTotal.toFixed(2);
       
-      // Update checkout button and save cart
+      // Actualizar botón de pago y guardar carrito
       updateCheckoutButton();
       localStorage.setItem('currentCart', JSON.stringify(cart));
     }
@@ -418,10 +402,10 @@
       updateCart();
     }
 
-    // Function to generate receipt content
+    // Función para generar contenido del recibo
     function generateReceipt(paymentMethod, saleId) {
       const igvToggle = document.getElementById('igv-toggle');
-      const taxLine = igvToggle.checked ? `IGV (18%): S/. ${taxAmount.textContent}\n` : '';
+      const taxLine = igvToggle.checked ? `IGV (18%): MXN ${taxAmount.textContent}\n` : '';
       return `
 CORONA POS - RECIBO DE VENTA
 =============================
@@ -431,20 +415,20 @@ Método de Pago: ${paymentMethod}
 -----------------------------
 ${cart.map(item => 
   `${item.name}
-   ${item.quantity} x S/. ${item.price.toFixed(2)} = S/. ${(item.price * item.quantity).toFixed(2)}`
+   ${item.quantity} x MXN ${item.price.toFixed(2)} = MXN ${(item.price * item.quantity).toFixed(2)}`
 ).join('\n-----------------------------\n')}
 =============================
-Subtotal: S/. ${subtotalAmount.textContent}
-${taxLine}TOTAL: S/. ${totalAmount.textContent}
+Subtotal: MXN ${subtotalAmount.textContent}
+${taxLine}TOTAL: MXN ${totalAmount.textContent}
 
 ¡Gracias por su compra!
       `;
     }
 
-    // Function to process payment and show receipt
+    // Función para procesar el pago y mostrar recibo
     function processPayment(paymentMethod) {
       try {
-        // Update inventory quantities
+        // Actualizar cantidades en inventario
         const inventory = JSON.parse(localStorage.getItem('inventory') || '[]');
         cart.forEach(item => {
           const product = inventory.find(p => p.barcode === item.barcode);
@@ -454,10 +438,10 @@ ${taxLine}TOTAL: S/. ${totalAmount.textContent}
         });
         localStorage.setItem('inventory', JSON.stringify(inventory));
 
-        // Generate sale ID (timestamp + random number for uniqueness)
+        // Generar ID de venta (timestamp + número aleatorio para unicidad)
         const saleId = `${Date.now()}-${Math.floor(Math.random() * 1000)}`;
 
-        // Save sale to localStorage
+        // Guardar venta en localStorage
         const sales = JSON.parse(localStorage.getItem('sales') || '[]');
         const sale = {
           id: saleId,
@@ -471,16 +455,17 @@ ${taxLine}TOTAL: S/. ${totalAmount.textContent}
         sales.push(sale);
         localStorage.setItem('sales', JSON.stringify(sales));
 
-        // Hide payment modal and show receipt
+        // Ocultar modal de pago y mostrar recibo
         paymentModal.classList.add('hidden');
         paymentModal.classList.remove('flex');
+        paymentModal.style.display = 'none';
 
-        // Show receipt modal
+        // Mostrar modal de recibo
         receiptContent.textContent = generateReceipt(paymentMethod, saleId);
         receiptModal.classList.remove('hidden');
         receiptModal.classList.add('flex');
 
-        // Clear cart
+        // Limpiar carrito
         cart = [];
         updateCart();
       } catch (error) {
@@ -488,11 +473,11 @@ ${taxLine}TOTAL: S/. ${totalAmount.textContent}
       }
     }
 
-    // Event listeners for payment buttons
+    // Eventos para botones de pago
     cashPaymentBtn.addEventListener('click', () => processPayment('Efectivo'));
     cardPaymentBtn.addEventListener('click', () => processPayment('Tarjeta'));
 
-    // Event listener for print button
+    // Evento para botón de imprimir
     printReceiptBtn.addEventListener('click', () => {
       const printWindow = window.open('', '_blank');
       printWindow.document.write(`
@@ -512,14 +497,14 @@ ${taxLine}TOTAL: S/. ${totalAmount.textContent}
       printWindow.print();
     });
 
-    // Event listener for close receipt button
+    // Evento para botón cerrar recibo
     closeReceiptBtn.addEventListener('click', () => {
       receiptModal.classList.add('hidden');
       receiptModal.classList.remove('flex');
       scanButton.focus();
     });
 
-    // Handle form submission
+    // Manejar envío del formulario
     productForm.addEventListener('submit', (e) => {
       e.preventDefault();
       const name = productName.value.trim();
@@ -530,13 +515,13 @@ ${taxLine}TOTAL: S/. ${totalAmount.textContent}
 
       if (name && price >= 0 && quantity > 0) {
         if (barcode) {
-          // If product was scanned, check stock
+          // Si el producto fue escaneado, verificar stock
           if (quantity > stock) {
             alert(`Stock insuficiente. Stock disponible: ${stock}`);
             return;
           }
 
-          // Check if scanned product exists in cart
+          // Verificar si el producto escaneado ya existe en el carrito
           const existingItem = cart.find(item => item.barcode === barcode);
           if (existingItem) {
             if (existingItem.quantity + quantity > stock) {
@@ -548,7 +533,7 @@ ${taxLine}TOTAL: S/. ${totalAmount.textContent}
             cart.push({ name, price, quantity, barcode });
           }
         } else {
-          // Manual entry - no stock validation needed
+          // Entrada manual - no se necesita validación de stock
           cart.push({ name, price, quantity });
         }
 
@@ -561,10 +546,10 @@ ${taxLine}TOTAL: S/. ${totalAmount.textContent}
       }
     });
 
-    // Add event listener for search input
+    // Agregar evento para entrada de búsqueda
     document.getElementById('inventory-search').addEventListener('input', searchInventory);
 
-    // Update checkout button state and add click handler
+    // Actualizar estado del botón de pago y agregar manejador de clic
     function updateCheckoutButton() {
       const isEmpty = cart.length === 0;
       checkoutBtn.disabled = isEmpty;
@@ -575,40 +560,40 @@ ${taxLine}TOTAL: S/. ${totalAmount.textContent}
       }
     }
 
-    // Handle checkout button click
+    // Manejar clic en botón de pago
     checkoutBtn.addEventListener('click', function(event) {
       event.preventDefault();
       event.stopPropagation();
-      console.log('Checkout button clicked');
+      console.log('Botón de pago clickeado');
       
       if (cart.length === 0) {
-        console.log('Cart is empty');
+        console.log('El carrito está vacío');
         return;
       }
       
-      console.log('Opening payment modal');
+      console.log('Abriendo modal de pago');
       paymentModal.classList.remove('hidden');
       paymentModal.style.display = 'flex';
       paymentModal.style.alignItems = 'center';
       paymentModal.style.justifyContent = 'center';
       
-      // Focus on the first payment button
+      // Enfocar el primer botón de pago
       document.getElementById('cash-payment').focus();
     });
 
-    // Close modal when clicking outside
+    // Cerrar modal al hacer clic fuera
     paymentModal.addEventListener('click', function(e) {
       if (e.target === paymentModal) {
-        console.log('Closing payment modal');
+        console.log('Cerrando modal de pago');
         paymentModal.classList.add('hidden');
         paymentModal.style.display = 'none';
       }
     });
 
-    // Close modal with Escape key
+    // Cerrar modal con tecla Escape
     document.addEventListener('keydown', function(e) {
       if (e.key === 'Escape' && !paymentModal.classList.contains('hidden')) {
-        console.log('Closing payment modal with Escape key');
+        console.log('Cerrando modal de pago con tecla Escape');
         paymentModal.classList.add('hidden');
         paymentModal.style.display = 'none';
       }
@@ -621,19 +606,19 @@ ${taxLine}TOTAL: S/. ${totalAmount.textContent}
       }
     });
 
-    // Initialize cart on page load
+    // Inicializar carrito al cargar la página
     updateCart();
 
-    // Initialize search on page load
+    // Inicializar búsqueda al cargar la página
     document.addEventListener('DOMContentLoaded', () => {
       try {
-        console.log('Page loaded, checking inventory');
+        console.log('Página cargada, verificando inventario');
         const inventoryStr = localStorage.getItem('inventory');
-        console.log('Raw inventory data:', inventoryStr);
+        console.log('Datos crudos de inventario:', inventoryStr);
         
         let inventory = JSON.parse(inventoryStr || '[]');
         
-        // Initialize test inventory if empty
+        // Inicializar inventario de prueba si está vacío
         if (inventory.length === 0) {
           inventory = [
             {
@@ -656,16 +641,16 @@ ${taxLine}TOTAL: S/. ${totalAmount.textContent}
             }
           ];
           localStorage.setItem('inventory', JSON.stringify(inventory));
-          console.log('Test inventory initialized:', inventory);
+          console.log('Inventario de prueba inicializado:', inventory);
         }
         
-        console.log('Initial inventory:', JSON.stringify(inventory, null, 2));
+        console.log('Inventario inicial:', JSON.stringify(inventory, null, 2));
       } catch (error) {
-        console.error('Error in DOMContentLoaded:', error);
+        console.error('Error en DOMContentLoaded:', error);
       }
     });
 
-    // Barcode scanner functionality
+    // Funcionalidad del escáner de código de barras
     scanButton.addEventListener('click', () => {
       scannerModal.classList.remove('hidden');
       scannerModal.classList.add('flex');
@@ -685,27 +670,27 @@ ${taxLine}TOTAL: S/. ${totalAmount.textContent}
         
         if (barcode) {
           try {
-            // Get inventory from localStorage
+            // Obtener inventario de localStorage
             const inventory = JSON.parse(localStorage.getItem('inventory') || '[]');
             const product = inventory.find(item => item.barcode === barcode);
 
             if (product) {
-              // Fill the form with product details
+              // Llenar el formulario con detalles del producto
               productName.value = product.name;
               productPrice.value = product.price;
               productQuantity.value = '1';
               productBarcode.value = product.barcode;
               productStock.value = product.quantity;
               
-              // Close the modal
+              // Cerrar el modal
               scannerModal.classList.add('hidden');
               scannerModal.classList.remove('flex');
 
-              // Focus quantity field
+              // Enfocar campo cantidad
               productQuantity.focus();
               productQuantity.select();
 
-              // Auto-submit if stock is available
+              // Enviar automáticamente si hay stock disponible
               if (product.quantity > 0) {
                 productForm.dispatchEvent(new Event('submit'));
               } else {
@@ -722,7 +707,7 @@ ${taxLine}TOTAL: S/. ${totalAmount.textContent}
       }
     });
 
-    // Close modal when clicking outside
+    // Cerrar modal al hacer clic fuera
     scannerModal.addEventListener('click', (e) => {
       if (e.target === scannerModal) {
         scannerModal.classList.add('hidden');
@@ -730,14 +715,14 @@ ${taxLine}TOTAL: S/. ${totalAmount.textContent}
       }
     });
 
-    // Handle keyboard shortcuts
+    // Manejar atajos de teclado
     document.addEventListener('keydown', (e) => {
-      // Alt + B to open barcode scanner
+      // Alt + B para abrir escáner de código de barras
       if (e.altKey && e.key.toLowerCase() === 'b') {
         e.preventDefault();
         scanButton.click();
       }
-      // Escape to close modal
+      // Escape para cerrar modal
       if (e.key === 'Escape' && !scannerModal.classList.contains('hidden')) {
         cancelScan.click();
       }
