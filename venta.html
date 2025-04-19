@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ventas - Corona POS</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            corona: {
+              gold: '#FFD700',
+              yellow: '#FFC72C',
+              dark: '#2C2C2C'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="min-h-screen flex flex-col bg-gray-50">
+  <header class="bg-corona-dark shadow-lg">
+    <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+      <div class="flex items-center gap-4">
+        <img src="https://www.seekpng.com/png/full/362-3624266_corona-logo-png.png" alt="Corona Logo" class="h-12">
+        <h1 class="text-2xl font-bold text-white">Ventas</h1>
+      </div>
+      <nav class="flex items-center space-x-6">
+        <a href="base.html" class="text-white hover:text-corona-gold transition flex items-center gap-2">
+          <i class="fas fa-arrow-left"></i>
+          <span>Volver</span>
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Barcode Scanner Modal -->
+  <div id="scanner-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+    <div class="bg-white rounded-lg p-8 max-w-md w-full mx-4">
+      <div class="text-center mb-6">
+        <i class="fas fa-barcode text-4xl text-corona-dark mb-4"></i>
+        <h3 class="text-xl font-bold text-corona-dark">Escáner de Código de Barras</h3>
+        <p class="text-gray-600 mt-2">Escanee el código de barras del producto</p>
+      </div>
+      <div class="relative">
+        <input type="text" id="barcode-input" 
+          class="w-full px-4 py-2 border-2 border-corona-dark rounded focus:outline-none" 
+          placeholder="Código de barras..."
+          autocomplete="off">
+      </div>
+      <div class="flex justify-end mt-6 gap-2">
+        <button id="cancel-scan" class="px-4 py-2 text-gray-600 hover:text-gray-800">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <main class="flex-1 container mx-auto px-4 py-8">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- Product Selection -->
+      <div class="lg:col-span-2 bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-xl font-semibold mb-4 text-corona-dark flex items-center gap-2">
+          <i class="fas fa-shopping-cart"></i> Agregar Producto
+        </h2>
+        <!-- Search and Scan -->
+        <div class="flex gap-4 mb-6">
+          <div class="flex-1">
+            <div class="flex gap-2">
+              <input type="text" id="inventory-search" 
+                placeholder="Buscar producto por nombre..." 
+                class="flex-1 px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-corona-gold">
+              <button onclick="searchInventory()" class="px-4 py-2 bg-corona-dark text-white rounded hover:bg-opacity-90 transition">
+                <i class="fas fa-search"></i>
+              </button>
+            </div>
+          </div>
+          <button id="scan-button" class="flex items-center gap-2 bg-corona-dark text-white px-4 py-2 rounded hover:bg-corona-dark/80 transition">
+            <i class="fas fa-barcode"></i>
+            Escanear Código
+          </button>
+        </div>
+
+        <!-- Inventory Results -->
+        <div id="search-results" class="mb-6 hidden">
+          <div class="border border-gray-200 rounded-lg overflow-hidden">
+            <table class="w-full text-left">
+              <thead class="bg-corona-dark text-white">
+                <tr>
+                  <th class="px-4 py-2">Nombre</th>
+                  <th class="px-4 py-2">Código</th>
+                  <th class="px-4 py-2">Stock</th>
+                  <th class="px-4 py-2">Precio</th>
+                  <th class="px-4 py-2 text-center">Agregar</th>
+                </tr>
+              </thead>
+              <tbody id="inventory-results" class="divide-y divide-gray-200 bg-white">
+                <!-- Results will be added here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Product Form -->
+        <form id="product-form" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end border-t border-gray-200 pt-6">
+          <div>
+            <label for="product-name" class="block text-gray-700 mb-1">Nombre</label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
+                <i class="fas fa-box"></i>
+              </span>
+              <input type="text" id="product-name" 
+                class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-corona-gold" 
+                placeholder="Ej. Corona Extra" required />
+            </div>
+          </div>
+          <div>
+            <label for="product-price" class="block text-gray-700 mb-1">Precio (S/.)</label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
+                <i class="fas fa-dollar-sign"></i>
+              </span>
+              <input type="number" id="product-price" 
+                class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-corona-gold" 
+                placeholder="0.00" min="0" step="0.01" required />
+            </div>
+          </div>
+          <div>
+            <label for="product-quantity" class="block text-gray-700 mb-1">Cantidad</label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
+                <i class="fas fa-hashtag"></i>
+              </span>
+              <input type="number" id="product-quantity" 
+                class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-corona-gold" 
+                placeholder="1" min="1" step="1" required />
+            </div>
+          </div>
+          <div>
+            <button type="submit" class="w-full bg-corona-dark text-white font-semibold rounded px-4 py-2 hover:bg-corona-dark/80 transition">
+              Agregar <i class="fas fa-plus ml-2"></i>
+            </button>
+          </div>
+          <input type="hidden" id="product-barcode" />
+          <input type="hidden" id="product-stock" />
+        </form>
+
+        <div class="mt-8">
+          <h2 class="text-xl font-semibold mb-4 text-corona-dark flex items-center gap-2">
+            <i class="fas fa-shopping-cart"></i> Carrito de Compras
+          </h2>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border border-gray-300 rounded">
+              <thead class="bg-corona-dark text-white">
+                <tr>
+                  <th class="px-4 py-2">Producto</th>
+                  <th class="px-4 py-2">Precio Unit.</th>
+                  <th class="px-4 py-2">Cant.</th>
+                  <th class="px-4 py-2">Subtotal</th>
+                  <th class="px-4 py-2">Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="cart-items" class="divide-y divide-gray-200">
+                <!-- Items will be added here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Order Summary -->
+      <div class="lg:sticky lg:top-4">
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <h2 class="text-xl font-semibold mb-4 text-corona-dark flex items-center gap-2">
+            <i class="fas fa-receipt"></i> Resumen de Venta
+          </h2>
+          <div class="flex flex-col">
+            <div class="space-y-4 mb-6">
+              <div class="flex justify-between items-center py-2 border-b border-gray-200">
+                <span class="text-gray-600">Subtotal:</span>
+                <span class="font-semibold">S/. <span id="subtotal-amount">0.00</span></span>
+              </div>
+              <div class="flex items-center justify-between py-2 border-b border-gray-200">
+                <div class="flex items-center gap-2">
+                  <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" id="igv-toggle" class="sr-only peer">
+                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-corona-gold rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-corona-gold"></div>
+                  </label>
+                  <span class="text-gray-600">IGV (18%)</span>
+                </div>
+                <span class="font-semibold">S/. <span id="tax-amount">0.00</span></span>
+              </div>
+              <div class="flex justify-between items-center py-2 text-lg font-bold">
+                <span class="text-corona-dark">Total:</span>
+                <span class="text-corona-dark">S/. <span id="total-amount">0.00</span></span>
+              </div>
+            </div>
+            <button type="button" id="checkout-btn" class="w-full bg-corona-gold text-corona-dark font-semibold rounded px-6 py-4 hover:bg-corona-yellow transition disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-corona-gold">
+              Finalizar Venta <i class="fas fa-cash-register ml-2"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Payment Method Modal -->
+  <div id="payment-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-[9999]" style="display: none;">
+    <div class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg p-8 max-w-md w-full mx-4">
+      <h3 class="text-xl font-bold text-corona-dark mb-6 text-center">Método de Pago</h3>
+      <div class="space-y-4">
+        <button id="cash-payment" class="w-full bg-corona-dark text-white font-semibold rounded px-6 py-4 hover:bg-opacity-90 transition flex items-center justify-center gap-3">
+          <i class="fas fa-money-bill-wave text-2xl"></i>
+          Efectivo
+        </button>
+        <button id="card-payment" class="w-full bg-corona-dark text-white font-semibold rounded px-6 py-4 hover:bg-opacity-90 transition flex items-center justify-center gap-3">
+          <i class="fas fa-credit-card text-2xl"></i>
+          Tarjeta
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Receipt Modal -->
+  <div id="receipt-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+    <div class="bg-white rounded-lg p-8 max-w-md w-full mx-4">
+      <div class="text-center mb-6">
+        <i class="fas fa-receipt text-4xl text-corona-dark mb-4"></i>
+        <h3 class="text-xl font-bold text-corona-dark">Ticket de Venta</h3>
+      </div>
+      <div id="receipt-content" class="font-mono text-sm whitespace-pre-wrap bg-gray-50 p-4 rounded mb-6"></div>
+      <div class="flex justify-end gap-4">
+        <button id="print-receipt" class="px-4 py-2 bg-corona-dark text-white rounded hover:bg-opacity-90 transition flex items-center gap-2">
+          <i class="fas fa-print"></i>
+          Imprimir
+        </button>
+        <button id="close-receipt" class="px-4 py-2 text-gray-600 hover:text-gray-800">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Get DOM elements
+    const productForm = document.getElementById('product-form');
+    const cartItems = document.getElementById('cart-items');
+    const subtotalAmount = document.getElementById('subtotal-amount');
+    const taxAmount = document.getElementById('tax-amount');
+    const totalAmount = document.getElementById('total-amount');
+    const checkoutBtn = document.getElementById('checkout-btn');
+    const scannerModal = document.getElementById('scanner-modal');
+    const scanButton = document.getElementById('scan-button');
+    const cancelScan = document.getElementById('cancel-scan');
+    const barcodeInput = document.getElementById('barcode-input');
+    const productName = document.getElementById('product-name');
+    const productPrice = document.getElementById('product-price');
+    const productQuantity = document.getElementById('product-quantity');
+    const productBarcode = document.getElementById('product-barcode');
+    const productStock = document.getElementById('product-stock');
+    const searchResults = document.getElementById('search-results');
+    const inventoryResults = document.getElementById('inventory-results');
+    const paymentModal = document.getElementById('payment-modal');
+    const receiptModal = document.getElementById('receipt-modal');
+    const receiptContent = document.getElementById('receipt-content');
+    const printReceiptBtn = document.getElementById('print-receipt');
+    const closeReceiptBtn = document.getElementById('close-receipt');
+    const cashPaymentBtn = document.getElementById('cash-payment');
+    const cardPaymentBtn = document.getElementById('card-payment');
+
+    // Initialize cart
+    let cart = JSON.parse(localStorage.getItem('currentCart') || '[]');
+
+    // Search inventory functionality
+    function searchInventory(e) {
+      try {
+        const searchTerm = document.getElementById('inventory-search').value.toLowerCase().trim();
+        console.log('Searching for:', searchTerm);
+        
+        const inventoryStr = localStorage.getItem('inventory');
+        console.log('Raw inventory data:', inventoryStr);
+        
+        const inventory = JSON.parse(inventoryStr || '[]');
+        console.log('Parsed inventory:', JSON.stringify(inventory, null, 2));
+        
+        const filteredInventory = inventory.filter(item => 
+          item.name.toLowerCase().includes(searchTerm)
+        );
+        console.log('Filtered inventory:', JSON.stringify(filteredInventory, null, 2));
+        
+        displaySearchResults(filteredInventory);
+      } catch (error) {
+        console.error('Error in searchInventory:', error);
+      }
+    }
+
+    function displaySearchResults(results) {
+      try {
+        console.log('Displaying results:', JSON.stringify(results, null, 2));
+        inventoryResults.innerHTML = '';
+        
+        if (!Array.isArray(results) || results.length === 0) {
+          console.log('No results found, hiding table');
+          searchResults.classList.add('hidden');
+          return;
+        }
+
+        results.forEach(item => {
+          const tr = document.createElement('tr');
+          tr.className = 'bg-white hover:bg-gray-50';
+          tr.innerHTML = `
+            <td class="px-4 py-2">${item.name}</td>
+            <td class="px-4 py-2">${item.barcode}</td>
+            <td class="px-4 py-2">${item.quantity}</td>
+            <td class="px-4 py-2">S/. ${item.price.toFixed(2)}</td>
+            <td class="px-4 py-2 text-center">
+              <button onclick="selectProduct('${item.barcode}')" 
+                class="text-corona-dark hover:text-corona-gold transition-colors duration-200">
+                <i class="fas fa-plus-circle text-lg"></i>
+              </button>
+            </td>
+          `;
+          inventoryResults.appendChild(tr);
+        });
+
+        console.log('Showing results table');
+        searchResults.classList.remove('hidden');
+      } catch (error) {
+        console.error('Error in displaySearchResults:', error);
+      }
+    }
+
+    function selectProduct(barcode) {
+      const inventory = JSON.parse(localStorage.getItem('inventory') || '[]');
+      const product = inventory.find(item => item.barcode === barcode);
+      
+      if (product) {
+        productName.value = product.name;
+        productPrice.value = product.price;
+        productQuantity.value = '1';
+        productBarcode.value = product.barcode;
+        productStock.value = product.quantity;
+        
+        // Auto-submit if stock is available
+        if (product.quantity > 0) {
+          productForm.dispatchEvent(new Event('submit'));
+        } else {
+          alert('No hay stock disponible para este producto.');
+        }
+      }
+    }
+
+    // Initialize IGV toggle state and event listener
+    document.addEventListener('DOMContentLoaded', function() {
+      const igvToggle = document.getElementById('igv-toggle');
+      let igvEnabled = false;
+
+      // Add IGV toggle event listener
+      igvToggle.addEventListener('change', function() {
+        igvEnabled = this.checked;
+        const subtotal = parseFloat(subtotalAmount.textContent);
+        const tax = igvEnabled ? subtotal * 0.18 : 0;
+        const finalTotal = subtotal + tax;
+
+        taxAmount.textContent = tax.toFixed(2);
+        totalAmount.textContent = finalTotal.toFixed(2);
+      });
+    });
+
+    function updateCart() {
+      cartItems.innerHTML = '';
+      let total = 0;
+
+      cart.forEach((item, index) => {
+        const subtotal = item.price * item.quantity;
+        total += subtotal;
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td class="px-4 py-2 border-b border-gray-300">${item.name}</td>
+          <td class="px-4 py-2 border-b border-gray-300">S/. ${item.price.toFixed(2)}</td>
+          <td class="px-4 py-2 border-b border-gray-300">${item.quantity}</td>
+          <td class="px-4 py-2 border-b border-gray-300">S/. ${subtotal.toFixed(2)}</td>
+          <td class="px-4 py-2 border-b border-gray-300 text-center">
+            <button class="text-red-600 hover:text-red-800" onclick="removeItem(${index})" aria-label="Eliminar producto">
+              <i class="fas fa-trash-alt"></i>
+            </button>
+          </td>
+        `;
+        cartItems.appendChild(tr);
+      });
+
+      // Update summary
+      const subtotal = total;
+      const igvToggle = document.getElementById('igv-toggle');
+      const tax = igvToggle.checked ? subtotal * 0.18 : 0;
+      const finalTotal = subtotal + tax;
+
+      subtotalAmount.textContent = subtotal.toFixed(2);
+      taxAmount.textContent = tax.toFixed(2);
+      totalAmount.textContent = finalTotal.toFixed(2);
+      
+      // Update checkout button and save cart
+      updateCheckoutButton();
+      localStorage.setItem('currentCart', JSON.stringify(cart));
+    }
+
+    function removeItem(index) {
+      cart.splice(index, 1);
+      updateCart();
+    }
+
+    // Function to generate receipt content
+    function generateReceipt(paymentMethod, saleId) {
+      const igvToggle = document.getElementById('igv-toggle');
+      const taxLine = igvToggle.checked ? `IGV (18%): S/. ${taxAmount.textContent}\n` : '';
+      return `
+CORONA POS - RECIBO DE VENTA
+=============================
+Folio: ${saleId}
+Fecha: ${new Date().toLocaleString()}
+Método de Pago: ${paymentMethod}
+-----------------------------
+${cart.map(item => 
+  `${item.name}
+   ${item.quantity} x S/. ${item.price.toFixed(2)} = S/. ${(item.price * item.quantity).toFixed(2)}`
+).join('\n-----------------------------\n')}
+=============================
+Subtotal: S/. ${subtotalAmount.textContent}
+${taxLine}TOTAL: S/. ${totalAmount.textContent}
+
+¡Gracias por su compra!
+      `;
+    }
+
+    // Function to process payment and show receipt
+    function processPayment(paymentMethod) {
+      try {
+        // Update inventory quantities
+        const inventory = JSON.parse(localStorage.getItem('inventory') || '[]');
+        cart.forEach(item => {
+          const product = inventory.find(p => p.barcode === item.barcode);
+          if (product) {
+            product.quantity -= item.quantity;
+          }
+        });
+        localStorage.setItem('inventory', JSON.stringify(inventory));
+
+        // Generate sale ID (timestamp + random number for uniqueness)
+        const saleId = `${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+
+        // Save sale to localStorage
+        const sales = JSON.parse(localStorage.getItem('sales') || '[]');
+        const sale = {
+          id: saleId,
+          items: cart,
+          subtotal: parseFloat(subtotalAmount.textContent),
+          tax: parseFloat(taxAmount.textContent),
+          total: parseFloat(totalAmount.textContent),
+          date: new Date().toISOString(),
+          paymentMethod: paymentMethod
+        };
+        sales.push(sale);
+        localStorage.setItem('sales', JSON.stringify(sales));
+
+        // Hide payment modal and show receipt
+        paymentModal.classList.add('hidden');
+        paymentModal.classList.remove('flex');
+
+        // Show receipt modal
+        receiptContent.textContent = generateReceipt(paymentMethod, saleId);
+        receiptModal.classList.remove('hidden');
+        receiptModal.classList.add('flex');
+
+        // Clear cart
+        cart = [];
+        updateCart();
+      } catch (error) {
+        alert('Error al procesar la venta: ' + error.message);
+      }
+    }
+
+    // Event listeners for payment buttons
+    cashPaymentBtn.addEventListener('click', () => processPayment('Efectivo'));
+    cardPaymentBtn.addEventListener('click', () => processPayment('Tarjeta'));
+
+    // Event listener for print button
+    printReceiptBtn.addEventListener('click', () => {
+      const printWindow = window.open('', '_blank');
+      printWindow.document.write(`
+        <html>
+          <head>
+            <title>Ticket de Venta</title>
+            <style>
+              body { font-family: monospace; white-space: pre; padding: 20px; }
+            </style>
+          </head>
+          <body>
+            ${receiptContent.textContent}
+          </body>
+        </html>
+      `);
+      printWindow.document.close();
+      printWindow.print();
+    });
+
+    // Event listener for close receipt button
+    closeReceiptBtn.addEventListener('click', () => {
+      receiptModal.classList.add('hidden');
+      receiptModal.classList.remove('flex');
+      scanButton.focus();
+    });
+
+    // Handle form submission
+    productForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = productName.value.trim();
+      const price = parseFloat(productPrice.value);
+      const quantity = parseInt(productQuantity.value);
+      const barcode = productBarcode.value;
+      const stock = parseInt(productStock.value || 0);
+
+      if (name && price >= 0 && quantity > 0) {
+        if (barcode) {
+          // If product was scanned, check stock
+          if (quantity > stock) {
+            alert(`Stock insuficiente. Stock disponible: ${stock}`);
+            return;
+          }
+
+          // Check if scanned product exists in cart
+          const existingItem = cart.find(item => item.barcode === barcode);
+          if (existingItem) {
+            if (existingItem.quantity + quantity > stock) {
+              alert(`Stock insuficiente. Stock disponible: ${stock - existingItem.quantity}`);
+              return;
+            }
+            existingItem.quantity += quantity;
+          } else {
+            cart.push({ name, price, quantity, barcode });
+          }
+        } else {
+          // Manual entry - no stock validation needed
+          cart.push({ name, price, quantity });
+        }
+
+        updateCart();
+        productForm.reset();
+        productBarcode.value = '';
+        productStock.value = '';
+        searchResults.classList.add('hidden');
+        productName.focus();
+      }
+    });
+
+    // Add event listener for search input
+    document.getElementById('inventory-search').addEventListener('input', searchInventory);
+
+    // Update checkout button state and add click handler
+    function updateCheckoutButton() {
+      const isEmpty = cart.length === 0;
+      checkoutBtn.disabled = isEmpty;
+      if (isEmpty) {
+        checkoutBtn.classList.add('opacity-50', 'cursor-not-allowed');
+      } else {
+        checkoutBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+      }
+    }
+
+    // Handle checkout button click
+    checkoutBtn.addEventListener('click', function(event) {
+      event.preventDefault();
+      event.stopPropagation();
+      console.log('Checkout button clicked');
+      
+      if (cart.length === 0) {
+        console.log('Cart is empty');
+        return;
+      }
+      
+      console.log('Opening payment modal');
+      paymentModal.classList.remove('hidden');
+      paymentModal.style.display = 'flex';
+      paymentModal.style.alignItems = 'center';
+      paymentModal.style.justifyContent = 'center';
+      
+      // Focus on the first payment button
+      document.getElementById('cash-payment').focus();
+    });
+
+    // Close modal when clicking outside
+    paymentModal.addEventListener('click', function(e) {
+      if (e.target === paymentModal) {
+        console.log('Closing payment modal');
+        paymentModal.classList.add('hidden');
+        paymentModal.style.display = 'none';
+      }
+    });
+
+    // Close modal with Escape key
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && !paymentModal.classList.contains('hidden')) {
+        console.log('Closing payment modal with Escape key');
+        paymentModal.classList.add('hidden');
+        paymentModal.style.display = 'none';
+      }
+    });
+
+    receiptModal.addEventListener('click', (e) => {
+      if (e.target === receiptModal) {
+        receiptModal.classList.add('hidden');
+        receiptModal.classList.remove('flex');
+      }
+    });
+
+    // Initialize cart on page load
+    updateCart();
+
+    // Initialize search on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      try {
+        console.log('Page loaded, checking inventory');
+        const inventoryStr = localStorage.getItem('inventory');
+        console.log('Raw inventory data:', inventoryStr);
+        
+        let inventory = JSON.parse(inventoryStr || '[]');
+        
+        // Initialize test inventory if empty
+        if (inventory.length === 0) {
+          inventory = [
+            {
+              barcode: '7501234567890',
+              name: 'Corona Extra 355ml',
+              quantity: 100,
+              price: 5.5
+            },
+            {
+              barcode: '7501234567891',
+              name: 'Corona Light 355ml',
+              quantity: 50,
+              price: 5.5
+            },
+            {
+              barcode: '7501234567892',
+              name: 'Cerveza Victoria',
+              quantity: 75,
+              price: 5
+            }
+          ];
+          localStorage.setItem('inventory', JSON.stringify(inventory));
+          console.log('Test inventory initialized:', inventory);
+        }
+        
+        console.log('Initial inventory:', JSON.stringify(inventory, null, 2));
+      } catch (error) {
+        console.error('Error in DOMContentLoaded:', error);
+      }
+    });
+
+    // Barcode scanner functionality
+    scanButton.addEventListener('click', () => {
+      scannerModal.classList.remove('hidden');
+      scannerModal.classList.add('flex');
+      barcodeInput.value = '';
+      barcodeInput.focus();
+    });
+
+    cancelScan.addEventListener('click', () => {
+      scannerModal.classList.add('hidden');
+      scannerModal.classList.remove('flex');
+    });
+
+    barcodeInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const barcode = barcodeInput.value.trim();
+        
+        if (barcode) {
+          try {
+            // Get inventory from localStorage
+            const inventory = JSON.parse(localStorage.getItem('inventory') || '[]');
+            const product = inventory.find(item => item.barcode === barcode);
+
+            if (product) {
+              // Fill the form with product details
+              productName.value = product.name;
+              productPrice.value = product.price;
+              productQuantity.value = '1';
+              productBarcode.value = product.barcode;
+              productStock.value = product.quantity;
+              
+              // Close the modal
+              scannerModal.classList.add('hidden');
+              scannerModal.classList.remove('flex');
+
+              // Focus quantity field
+              productQuantity.focus();
+              productQuantity.select();
+
+              // Auto-submit if stock is available
+              if (product.quantity > 0) {
+                productForm.dispatchEvent(new Event('submit'));
+              } else {
+                alert('No hay stock disponible para este producto.');
+              }
+            } else {
+              alert('Producto no encontrado en el inventario');
+            }
+          } catch (error) {
+            alert('Error al procesar el código de barras: ' + error.message);
+          }
+        }
+        barcodeInput.value = '';
+      }
+    });
+
+    // Close modal when clicking outside
+    scannerModal.addEventListener('click', (e) => {
+      if (e.target === scannerModal) {
+        scannerModal.classList.add('hidden');
+        scannerModal.classList.remove('flex');
+      }
+    });
+
+    // Handle keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+      // Alt + B to open barcode scanner
+      if (e.altKey && e.key.toLowerCase() === 'b') {
+        e.preventDefault();
+        scanButton.click();
+      }
+      // Escape to close modal
+      if (e.key === 'Escape' && !scannerModal.classList.contains('hidden')) {
+        cancelScan.click();
+      }
+    });
+  </script>
+</body>
+</html>
