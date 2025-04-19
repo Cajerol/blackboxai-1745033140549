@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="es">
+<!-- Previous head and style content remains the same -->
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Inventario - Corona POS</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            corona: {
+              gold: '#FFD700',
+              yellow: '#FFC72C',
+              dark: '#2C2C2C'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="min-h-screen flex flex-col bg-gray-50">
+  <!-- Previous HTML content remains the same -->
+  <header class="bg-corona-dark shadow-lg">
+    <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+      <div class="flex items-center gap-4">
+        <img src="https://www.seekpng.com/png/full/362-3624266_corona-logo-png.png" alt="Corona Logo" class="h-12">
+        <h1 class="text-2xl font-bold text-white">Inventario</h1>
+      </div>
+      <nav class="flex items-center space-x-6">
+        <a href="base.html" class="text-white hover:text-corona-gold transition flex items-center gap-2">
+          <i class="fas fa-arrow-left"></i>
+          <span>Volver</span>
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container mx-auto px-4 py-8">
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-xl font-semibold text-corona-dark flex items-center gap-2">
+          <i class="fas fa-boxes"></i> Productos en Inventario
+        </h2>
+        <button id="add-product-btn" class="bg-corona-dark text-white px-4 py-2 rounded hover:bg-corona-dark/80 transition flex items-center gap-2">
+          <i class="fas fa-plus"></i> Agregar Producto
+        </button>
+      </div>
+      
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border border-gray-300 rounded">
+          <thead class="bg-corona-dark text-white">
+            <tr>
+              <th class="px-4 py-3">Código</th>
+              <th class="px-4 py-3">Nombre</th>
+              <th class="px-4 py-3">Cantidad</th>
+              <th class="px-4 py-3">Precio Unit. (S/.)</th>
+              <th class="px-4 py-3">Valor Total (S/.)</th>
+              <th class="px-4 py-3">Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="inventory-items" class="divide-y divide-gray-200">
+            <!-- Inventory items will be added here -->
+          </tbody>
+          <tfoot class="bg-gray-50 font-semibold">
+            <tr>
+              <td class="px-4 py-3">Total</td>
+              <td class="px-4 py-3"></td>
+              <td class="px-4 py-3" id="total-items">0</td>
+              <td class="px-4 py-3">-</td>
+              <td class="px-4 py-3" id="total-value">S/. 0.00</td>
+              <td class="px-4 py-3"></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <!-- Modal -->
+  <div id="modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+    <div class="bg-white rounded-lg shadow-lg w-full max-w-md p-6">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-xl font-semibold text-corona-dark" id="modal-title">Agregar Producto</h3>
+        <button id="close-modal-btn" class="text-gray-400 hover:text-gray-600">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <form id="modal-form" class="space-y-4">
+        <div>
+          <label for="modal-barcode" class="block text-gray-700 font-semibold mb-1">Código de Barras</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
+              <i class="fas fa-barcode"></i>
+            </span>
+            <input type="text" id="modal-barcode" required 
+              class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-corona-gold" 
+              placeholder="Escanee o ingrese el código" />
+          </div>
+        </div>
+        <div>
+          <label for="modal-name" class="block text-gray-700 font-semibold mb-1">Nombre del Producto</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
+              <i class="fas fa-box"></i>
+            </span>
+            <input type="text" id="modal-name" required 
+              class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-corona-gold" 
+              placeholder="Ej. Corona Extra" />
+          </div>
+        </div>
+        <div>
+          <label for="modal-quantity" class="block text-gray-700 font-semibold mb-1">Cantidad en Stock</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
+              <i class="fas fa-hashtag"></i>
+            </span>
+            <input type="number" id="modal-quantity" min="0" required 
+              class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-corona-gold" 
+              placeholder="0" />
+          </div>
+        </div>
+        <div>
+          <label for="modal-price" class="block text-gray-700 font-semibold mb-1">Precio Unitario (S/.)</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
+              <i class="fas fa-dollar-sign"></i>
+            </span>
+            <input type="number" id="modal-price" min="0" step="0.01" required 
+              class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-corona-gold" 
+              placeholder="0.00" />
+          </div>
+        </div>
+        <div class="flex justify-end gap-4 mt-6">
+          <button type="button" id="cancel-btn" 
+            class="px-4 py-2 rounded border border-gray-300 hover:bg-gray-100 transition">
+            Cancelar
+          </button>
+          <button type="submit" 
+            class="bg-corona-dark text-white px-4 py-2 rounded hover:bg-corona-dark/80 transition">
+            Guardar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Get DOM elements
+    const inventoryItems = document.getElementById('inventory-items');
+    const totalItems = document.getElementById('total-items');
+    const totalValue = document.getElementById('total-value');
+    const addProductBtn = document.getElementById('add-product-btn');
+    const modal = document.getElementById('modal');
+    const modalForm = document.getElementById('modal-form');
+    const modalTitle = document.getElementById('modal-title');
+    const closeModalBtn = document.getElementById('close-modal-btn');
+    const cancelBtn = document.getElementById('cancel-btn');
+    const modalBarcode = document.getElementById('modal-barcode');
+    const modalName = document.getElementById('modal-name');
+    const modalQuantity = document.getElementById('modal-quantity');
+    const modalPrice = document.getElementById('modal-price');
+
+    // Initialize inventory from localStorage
+    let inventory = JSON.parse(localStorage.getItem('inventory') || '[]');
+    let editIndex = null;
+
+    function renderInventory() {
+      inventoryItems.innerHTML = '';
+      let totalItemsCount = 0;
+      let totalInventoryValue = 0;
+      inventory.forEach((item, index) => {
+        const tr = document.createElement('tr');
+        const totalValue = item.quantity * item.price;
+        totalItemsCount += item.quantity;
+        totalInventoryValue += totalValue;
+        
+        tr.innerHTML = `
+          <td class="px-4 py-3">${item.barcode}</td>
+          <td class="px-4 py-3">${item.name}</td>
+          <td class="px-4 py-3">${item.quantity}</td>
+          <td class="px-4 py-3">S/. ${item.price.toFixed(2)}</td>
+          <td class="px-4 py-3">S/. ${totalValue.toFixed(2)}</td>
+          <td class="px-4 py-3 space-x-2">
+            <button class="text-corona-dark hover:text-corona-dark/80" aria-label="Editar producto" onclick="editProduct(${index})">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button class="text-red-600 hover:text-red-800" aria-label="Eliminar producto" onclick="deleteProduct(${index})">
+              <i class="fas fa-trash-alt"></i>
+            </button>
+          </td>
+        `;
+        inventoryItems.appendChild(tr);
+      });
+
+      // Update totals
+      totalItems.textContent = totalItemsCount;
+      totalValue.textContent = `S/. ${totalInventoryValue.toFixed(2)}`;
+
+      // Save to localStorage
+      localStorage.setItem('inventory', JSON.stringify(inventory));
+      console.log('Saved inventory:', inventory);
+    }
+
+    function openModal(edit = false) {
+      modal.classList.remove('hidden');
+      if (edit) {
+        modalTitle.textContent = 'Editar Producto';
+      } else {
+        modalTitle.textContent = 'Agregar Producto';
+        modalForm.reset();
+      }
+      modalBarcode.focus();
+    }
+
+    function closeModal() {
+      modal.classList.add('hidden');
+      editIndex = null;
+    }
+
+    addProductBtn.addEventListener('click', () => openModal());
+    closeModalBtn.addEventListener('click', () => closeModal());
+    cancelBtn.addEventListener('click', () => closeModal());
+
+    // Handle barcode scanner input
+    modalBarcode.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        modalName.focus();
+      }
+    });
+
+    modalForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const barcode = modalBarcode.value.replace(/[\r\n]+/g, '').trim(); // Remove newlines and trim
+      const name = modalName.value.trim();
+      const quantity = parseInt(modalQuantity.value);
+      const price = parseFloat(modalPrice.value);
+
+      if (!barcode || !name || quantity < 0 || price < 0) {
+        alert('Por favor, complete todos los campos correctamente.');
+        return;
+      }
+
+      // Check if barcode already exists (except when editing the same product)
+      const existingProduct = inventory.find((item, index) => 
+        item.barcode === barcode && index !== editIndex
+      );
+      
+      if (existingProduct) {
+        alert('Ya existe un producto con este código de barras.');
+        return;
+      }
+
+      if (editIndex !== null) {
+        inventory[editIndex] = { barcode, name, quantity, price };
+      } else {
+        inventory.push({ barcode, name, quantity, price });
+      }
+
+      renderInventory();
+      closeModal();
+    });
+
+    function editProduct(index) {
+      editIndex = index;
+      const item = inventory[index];
+      modalBarcode.value = item.barcode;
+      modalName.value = item.name;
+      modalQuantity.value = item.quantity;
+      modalPrice.value = item.price;
+      openModal(true);
+    }
+
+    function deleteProduct(index) {
+      if (confirm('¿Está seguro que desea eliminar este producto?')) {
+        inventory.splice(index, 1);
+        renderInventory();
+      }
+    }
+
+    // Initialize inventory display
+    renderInventory();
+
+    // Handle keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+      // Alt + N to add new product
+      if (e.altKey && e.key.toLowerCase() === 'n') {
+        e.preventDefault();
+        addProductBtn.click();
+      }
+      // Escape to close modal
+      if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+        closeModal();
+      }
+    });
+  </script>
+</body>
+</html>
