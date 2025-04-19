@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Corona POS - Configuración</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            corona: {
+              gold: '#FFD700',
+              yellow: '#FFC72C',
+              dark: '#2C2C2C'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="min-h-screen bg-gray-50">
+  <!-- Authentication Check -->
+  <script>
+    const currentUser = localStorage.getItem('currentUser');
+    if (!currentUser) {
+      window.location.href = 'login.html';
+    }
+  </script>
+
+  <!-- Header -->
+  <header class="bg-corona-dark shadow-lg">
+    <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+      <div class="flex items-center">
+        <a href="base.html">
+          <img src="https://www.seekpng.com/png/full/362-3624266_corona-logo-png.png" alt="Corona Logo" class="h-12">
+        </a>
+      </div>
+      <div class="relative" id="userMenu">
+        <button id="userButton" class="text-white hover:text-corona-gold transition flex items-center gap-2">
+          <i class="fas fa-user-circle text-xl"></i>
+          <span id="userName">Cargando...</span>
+          <i class="fas fa-chevron-down text-sm"></i>
+        </button>
+        <div id="userDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
+          <a href="configuracion.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+            <i class="fas fa-cog mr-2"></i>Configuración
+          </a>
+          <button id="logout-btn" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+            <i class="fas fa-sign-out-alt mr-2"></i>Cerrar Sesión
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main content -->
+  <main class="container mx-auto px-4 py-8">
+    <h1 class="text-2xl font-bold mb-6">Configuración del Sistema</h1>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- Configuración General -->
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-xl font-semibold mb-4">Configuración General</h2>
+        <form id="generalConfig" class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+              Nombre del Negocio
+            </label>
+            <input type="text" id="businessName" class="w-full px-3 py-2 border rounded-md focus:ring-corona-gold focus:border-corona-gold">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+              Dirección
+            </label>
+            <input type="text" id="businessAddress" class="w-full px-3 py-2 border rounded-md focus:ring-corona-gold focus:border-corona-gold">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+              Teléfono
+            </label>
+            <input type="tel" id="businessPhone" class="w-full px-3 py-2 border rounded-md focus:ring-corona-gold focus:border-corona-gold">
+          </div>
+          <button type="submit" class="w-full bg-corona-gold hover:bg-corona-yellow text-corona-dark font-semibold py-2 px-4 rounded-md transition">
+            Guardar Cambios
+          </button>
+        </form>
+      </div>
+
+      <!-- Configuración de Usuario -->
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-xl font-semibold mb-4">Configuración de Usuario</h2>
+        <form id="userConfig" class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+              Nombre de Usuario
+            </label>
+            <input type="text" id="userName" class="w-full px-3 py-2 border rounded-md focus:ring-corona-gold focus:border-corona-gold">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+              Correo Electrónico
+            </label>
+            <input type="email" id="userEmail" class="w-full px-3 py-2 border rounded-md focus:ring-corona-gold focus:border-corona-gold">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+              Contraseña Actual
+            </label>
+            <input type="password" id="currentPassword" class="w-full px-3 py-2 border rounded-md focus:ring-corona-gold focus:border-corona-gold">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+              Nueva Contraseña
+            </label>
+            <input type="password" id="newPassword" class="w-full px-3 py-2 border rounded-md focus:ring-corona-gold focus:border-corona-gold">
+          </div>
+          <button type="submit" class="w-full bg-corona-gold hover:bg-corona-yellow text-corona-dark font-semibold py-2 px-4 rounded-md transition">
+            Actualizar Perfil
+          </button>
+        </form>
+      </div>
+
+      <!-- Configuración de Moneda -->
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-xl font-semibold mb-4">Configuración de Moneda</h2>
+        <form id="currencyConfig" class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+              Moneda Principal
+            </label>
+            <select id="primaryCurrency" class="w-full px-3 py-2 border rounded-md focus:ring-corona-gold focus:border-corona-gold">
+              <option value="MXN">Peso Mexicano (MXN)</option>
+              <option value="USD">Dólar Americano (USD)</option>
+              <option value="CAD">Dólar Canadiense (CAD)</option>
+            </select>
+          </div>
+          
+          <div class="space-y-4">
+            <h3 class="text-sm font-medium text-gray-700">Tipos de Cambio</h3>
+            <div>
+              <label class="block text-sm text-gray-600 mb-1">
+                1 USD = MXN
+              </label>
+              <input type="number" step="0.01" id="usdRate" placeholder="20.00" 
+                class="w-full px-3 py-2 border rounded-md focus:ring-corona-gold focus:border-corona-gold">
+            </div>
+            <div>
+              <label class="block text-sm text-gray-600 mb-1">
+                1 CAD = MXN
+              </label>
+              <input type="number" step="0.01" id="cadRate" placeholder="15.00"
+                class="w-full px-3 py-2 border rounded-md focus:ring-corona-gold focus:border-corona-gold">
+            </div>
+          </div>
+
+          <button type="submit" class="w-full bg-corona-gold hover:bg-corona-yellow text-corona-dark font-semibold py-2 px-4 rounded-md transition">
+            Guardar Configuración
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Debug Panel -->
+    <div class="mt-6">
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-xl font-semibold mb-4">Panel de Debug</h2>
+        <div class="space-y-4">
+          <div class="flex gap-2">
+            <button onclick="clearLogs()" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition">
+              Limpiar Logs
+            </button>
+            <button onclick="resetInventory()" class="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition">
+              Reiniciar Inventario
+            </button>
+          </div>
+
+          <div>
+            <h3 class="font-semibold mb-2">Logs de Debug:</h3>
+            <pre id="debug-log" class="bg-gray-100 p-4 rounded text-sm font-mono overflow-x-auto max-h-40 overflow-y-auto"></pre>
+          </div>
+
+          <div>
+            <h3 class="font-semibold mb-2">Inventario Actual:</h3>
+            <div class="mb-3">
+              <div class="flex gap-2">
+                <input type="text" id="inventory-search" 
+                  placeholder="Buscar producto por nombre..." 
+                  class="flex-1 px-3 py-2 border rounded-md focus:ring-corona-gold focus:border-corona-gold">
+                <button onclick="searchInventory()" class="px-4 py-2 bg-corona-dark text-white rounded hover:bg-opacity-90 transition">
+                  <i class="fas fa-search"></i>
+                </button>
+              </div>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border border-gray-300 rounded">
+                <thead class="bg-corona-dark text-white">
+                  <tr>
+                    <th class="px-4 py-2">Nombre</th>
+                    <th class="px-4 py-2">Código</th>
+                    <th class="px-4 py-2">Cantidad</th>
+                    <th class="px-4 py-2">Precio</th>
+                  </tr>
+                </thead>
+                <tbody id="inventory-output" class="divide-y divide-gray-200">
+                  <!-- Items will be added here -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="font-semibold mb-2">Prueba de Búsqueda por Código:</h3>
+            <div class="flex gap-2">
+              <input type="text" id="test-barcode" value="7501234567890" 
+                class="flex-1 px-3 py-2 border rounded-md focus:ring-corona-gold focus:border-corona-gold">
+              <button onclick="testLookup()" class="px-4 py-2 bg-corona-dark text-white rounded hover:bg-opacity-90 transition">
+                Probar
+              </button>
+            </div>
+            <pre id="lookup-output" class="mt-2 bg-gray-100 p-4 rounded text-sm font-mono overflow-x-auto"></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // Debug functionality
+    let debugLog = [];
+
+    function log(message) {
+      const timestamp = new Date().toISOString();
+      const logMessage = `${timestamp}: ${message}`;
+      debugLog.push(logMessage);
+      updateLogDisplay();
+      localStorage.setItem('debug_log', JSON.stringify(debugLog));
+    }
+
+    function updateLogDisplay() {
+      document.getElementById('debug-log').textContent = debugLog.join('\n');
+    }
+
+    function clearLogs() {
+      debugLog = [];
+      localStorage.removeItem('debug_log');
+      updateLogDisplay();
+    }
+
+    function displayInventory(filteredInventory = null) {
+      const inventory = filteredInventory || JSON.parse(localStorage.getItem('inventory') || '[]');
+      const tbody = document.getElementById('inventory-output');
+      tbody.innerHTML = '';
+
+      inventory.forEach(item => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td class="px-4 py-2">${item.name}</td>
+          <td class="px-4 py-2">${item.barcode}</td>
+          <td class="px-4 py-2">${item.quantity}</td>
+          <td class="px-4 py-2">S/. ${item.price.toFixed(2)}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      if (filteredInventory) {
+        log('Displayed filtered inventory: ' + JSON.stringify(inventory));
+      } else {
+        log('Displayed current inventory: ' + JSON.stringify(inventory));
+      }
+    }
+
+    function searchInventory() {
+      const searchTerm = document.getElementById('inventory-search').value.toLowerCase().trim();
+      const inventory = JSON.parse(localStorage.getItem('inventory') || '[]');
+      
+      if (!searchTerm) {
+        displayInventory();
+        return;
+      }
+
+      const filteredInventory = inventory.filter(item => 
+        item.name.toLowerCase().includes(searchTerm)
+      );
+      
+      displayInventory(filteredInventory);
+      log('Searched inventory for: ' + searchTerm);
+    }
+
+    // Add event listener for search input
+    document.getElementById('inventory-search').addEventListener('keyup', (e) => {
+      if (e.key === 'Enter' || !e.target.value.trim()) {
+        searchInventory();
+      }
+    });
+
+    function resetInventory() {
+      if (confirm('¿Está seguro que desea reiniciar el inventario? Esta acción no se puede deshacer.')) {
+        // Clear localStorage
+        localStorage.clear();
+        log('Cleared localStorage');
+        
+        // Add test product
+        const inventory = [{
+          barcode: '7501234567890',
+          name: 'Corona Extra 355ml',
+          quantity: 100,
+          price: 5.50
+        }];
+        
+        // Save to localStorage
+        localStorage.setItem('inventory', JSON.stringify(inventory));
+        log('Reset inventory with test product: ' + JSON.stringify(inventory));
+        
+        // Update display
+        displayInventory();
+      }
+    }
+
+    function testLookup() {
+      const barcode = document.getElementById('test-barcode').value;
+      const inventory = JSON.parse(localStorage.getItem('inventory') || '[]');
+      
+      log('Testing barcode lookup: ' + barcode);
+      log('Current inventory: ' + JSON.stringify(inventory));
+      
+      const product = inventory.find(item => {
+        const matches = item.barcode === barcode;
+        log(`Comparing: ${item.barcode} === ${barcode} (${matches})`);
+        return matches;
+      });
+      
+      const result = product ? 
+        `Found: ${JSON.stringify(product, null, 2)}` : 
+        'Product not found';
+      
+      document.getElementById('lookup-output').textContent = result;
+      log('Lookup result: ' + result);
+    }
+
+    // Toggle user dropdown
+    const userButton = document.getElementById('userButton');
+    const userDropdown = document.getElementById('userDropdown');
+    const userName = document.getElementById('userName');
+
+    // Set user name
+    const user = JSON.parse(localStorage.getItem('currentUser'));
+    if (user) {
+      userName.textContent = user.name;
+    }
+
+    userButton.addEventListener('click', () => {
+      userDropdown.classList.toggle('hidden');
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!userButton.contains(e.target) && !userDropdown.contains(e.target)) {
+        userDropdown.classList.add('hidden');
+      }
+    });
+
+    // Logout functionality
+    const logoutBtn = document.getElementById('logout-btn');
+    logoutBtn.addEventListener('click', () => {
+      if (confirm('¿Está seguro que desea cerrar sesión?')) {
+        localStorage.removeItem('currentUser');
+        window.location.href = 'login.html';
+      }
+    });
+
+    // Load configuration from localStorage
+    const config = JSON.parse(localStorage.getItem('systemConfig')) || {
+      businessName: '',
+      businessAddress: '',
+      businessPhone: '',
+      primaryCurrency: 'MXN',
+      exchangeRates: {
+        USD: 20.00,
+        CAD: 15.00
+      }
+    };
+
+    // Initialize general configuration
+    document.getElementById('businessName').value = config.businessName;
+    document.getElementById('businessAddress').value = config.businessAddress;
+    document.getElementById('businessPhone').value = config.businessPhone;
+
+    // Initialize currency configuration
+    document.getElementById('primaryCurrency').value = config.primaryCurrency || 'MXN';
+    document.getElementById('usdRate').value = config.exchangeRates?.USD || 20.00;
+    document.getElementById('cadRate').value = config.exchangeRates?.CAD || 15.00;
+
+    // Load user data
+    if (user) {
+      document.getElementById('userName').value = user.name;
+      document.getElementById('userEmail').value = user.email;
+    }
+
+    // Save general configuration
+    document.getElementById('generalConfig').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const newConfig = {
+        ...config,
+        businessName: document.getElementById('businessName').value,
+        businessAddress: document.getElementById('businessAddress').value,
+        businessPhone: document.getElementById('businessPhone').value
+      };
+      localStorage.setItem('systemConfig', JSON.stringify(newConfig));
+      alert('Configuración guardada exitosamente');
+    });
+
+    // Save currency configuration
+    document.getElementById('currencyConfig').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const newConfig = {
+        ...config,
+        primaryCurrency: document.getElementById('primaryCurrency').value,
+        exchangeRates: {
+          USD: parseFloat(document.getElementById('usdRate').value),
+          CAD: parseFloat(document.getElementById('cadRate').value)
+        }
+      };
+      localStorage.setItem('systemConfig', JSON.stringify(newConfig));
+      alert('Configuración de moneda guardada exitosamente');
+    });
+
+    // Update user profile
+    document.getElementById('userConfig').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const currentPassword = document.getElementById('currentPassword').value;
+      const newPassword = document.getElementById('newPassword').value;
+      const newName = document.getElementById('userName').value;
+      const newEmail = document.getElementById('userEmail').value;
+
+      // Get all users
+      const users = JSON.parse(localStorage.getItem('users')) || [];
+      const userIndex = users.findIndex(u => u.email === user.email);
+
+      if (userIndex === -1) {
+        alert('Error: Usuario no encontrado');
+        return;
+      }
+
+      // Verify current password
+      if (currentPassword !== users[userIndex].password) {
+        alert('Error: Contraseña actual incorrecta');
+        return;
+      }
+
+      // Update user data
+      users[userIndex] = {
+        ...users[userIndex],
+        name: newName,
+        email: newEmail,
+        password: newPassword || users[userIndex].password
+      };
+
+      // Update localStorage
+      localStorage.setItem('users', JSON.stringify(users));
+      localStorage.setItem('currentUser', JSON.stringify(users[userIndex]));
+
+      alert('Perfil actualizado exitosamente');
+      window.location.reload();
+    });
+
+    // Initialize debug panel
+    debugLog = JSON.parse(localStorage.getItem('debug_log') || '[]');
+    updateLogDisplay();
+    displayInventory();
+    log('Debug panel loaded');
+  </script>
+</body>
+</html>
