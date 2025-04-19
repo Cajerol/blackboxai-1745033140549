@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Corona POS</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            corona: {
+              gold: '#FFD700',
+              yellow: '#FFC72C',
+              dark: '#2C2C2C'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="min-h-screen bg-gray-50">
+  <!-- Authentication Check -->
+  <script>
+    // Check if user is authenticated
+    const currentUser = localStorage.getItem('currentUser');
+    if (!currentUser) {
+      window.location.href = 'login.html';
+    }
+  </script>
+
+  <!-- Header -->
+  <header class="bg-corona-dark shadow-lg">
+    <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+      <div class="flex items-center">
+        <img src="https://www.seekpng.com/png/full/362-3624266_corona-logo-png.png" alt="Corona Logo" class="h-12">
+      </div>
+      <div class="relative" id="userMenu">
+        <button id="userButton" class="text-white hover:text-corona-gold transition flex items-center gap-2">
+          <i class="fas fa-user-circle text-xl"></i>
+          <span id="userName">Cargando...</span>
+          <i class="fas fa-chevron-down text-sm"></i>
+        </button>
+        <div id="userDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
+          <a href="configuracion.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+            <i class="fas fa-cog mr-2"></i>Configuración
+          </a>
+          <button id="logout-btn" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+            <i class="fas fa-sign-out-alt mr-2"></i>Cerrar Sesión
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main content -->
+  <main class="container mx-auto px-4 py-8">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <a href="venta.html" class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition group">
+        <div class="flex items-center justify-center h-20 w-20 rounded-full bg-corona-gold/10 mb-4 mx-auto group-hover:bg-corona-gold/20">
+          <i class="fas fa-cash-register text-3xl text-corona-gold"></i>
+        </div>
+        <h2 class="text-xl font-semibold text-center mb-2">Ventas</h2>
+        <p class="text-gray-600 text-center">Gestionar ventas y transacciones</p>
+      </a>
+      
+      <a href="inventario.html" class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition group">
+        <div class="flex items-center justify-center h-20 w-20 rounded-full bg-corona-gold/10 mb-4 mx-auto group-hover:bg-corona-gold/20">
+          <i class="fas fa-boxes text-3xl text-corona-gold"></i>
+        </div>
+        <h2 class="text-xl font-semibold text-center mb-2">Inventario</h2>
+        <p class="text-gray-600 text-center">Administrar productos y stock</p>
+      </a>
+      
+      <a href="usuarios.html" class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition group">
+        <div class="flex items-center justify-center h-20 w-20 rounded-full bg-corona-gold/10 mb-4 mx-auto group-hover:bg-corona-gold/20">
+          <i class="fas fa-users text-3xl text-corona-gold"></i>
+        </div>
+        <h2 class="text-xl font-semibold text-center mb-2">Usuarios</h2>
+        <p class="text-gray-600 text-center">Gestionar accesos y roles</p>
+      </a>
+    </div>
+  </main>
+
+  <script>
+    // Initialize local storage if not exists
+    if (!localStorage.getItem('inventory')) {
+      localStorage.setItem('inventory', JSON.stringify([]));
+    }
+    if (!localStorage.getItem('sales')) {
+      localStorage.setItem('sales', JSON.stringify([]));
+    }
+    if (!localStorage.getItem('users')) {
+      localStorage.setItem('users', JSON.stringify([
+        {
+          name: 'Admin',
+          email: 'admin@corona.com',
+          password: 'admin123', // Adding default password
+          role: 'Administrador'
+        }
+      ]));
+    }
+
+    // Toggle user dropdown
+    const userButton = document.getElementById('userButton');
+    const userDropdown = document.getElementById('userDropdown');
+    const userName = document.getElementById('userName');
+
+    // Set user name
+    const user = JSON.parse(localStorage.getItem('currentUser'));
+    if (user) {
+      userName.textContent = user.name;
+    }
+
+    userButton.addEventListener('click', () => {
+      userDropdown.classList.toggle('hidden');
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!userButton.contains(e.target) && !userDropdown.contains(e.target)) {
+        userDropdown.classList.add('hidden');
+      }
+    });
+
+    // Logout functionality
+    const logoutBtn = document.getElementById('logout-btn');
+    logoutBtn.addEventListener('click', () => {
+      if (confirm('¿Está seguro que desea cerrar sesión?')) {
+        localStorage.removeItem('currentUser');
+        window.location.href = 'login.html';
+      }
+    });
+  </script>
+</body>
+</html>
