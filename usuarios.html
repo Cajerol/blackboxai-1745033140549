@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Usuarios - Corona POS</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            corona: {
+              gold: '#FFD700',
+              yellow: '#FFC72C',
+              dark: '#2C2C2C'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="min-h-screen flex flex-col bg-gray-50">
+  <!-- Header -->
+  <header class="bg-corona-dark shadow-lg">
+    <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+      <div class="flex items-center gap-4">
+        <img src="https://www.seekpng.com/png/full/362-3624266_corona-logo-png.png" alt="Corona Logo" class="h-12">
+        <h1 class="text-2xl font-bold text-white">Usuarios</h1>
+      </div>
+      <nav class="flex items-center space-x-6">
+        <a href="base.html" class="text-white hover:text-corona-gold transition flex items-center gap-2">
+          <i class="fas fa-arrow-left"></i>
+          <span>Volver</span>
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container mx-auto px-4 py-8">
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-xl font-semibold text-corona-dark flex items-center gap-2">
+          <i class="fas fa-users"></i> Gestión de Usuarios
+        </h2>
+        <button id="add-user-btn" class="bg-corona-dark text-white px-4 py-2 rounded hover:bg-corona-dark/80 transition flex items-center gap-2">
+          <i class="fas fa-plus"></i> Agregar Usuario
+        </button>
+      </div>
+      
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border border-gray-300 rounded">
+          <thead class="bg-corona-dark text-white">
+            <tr>
+              <th class="px-4 py-3">Nombre</th>
+              <th class="px-4 py-3">Correo Electrónico</th>
+              <th class="px-4 py-3">Rol</th>
+              <th class="px-4 py-3">Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="user-items" class="divide-y divide-gray-200">
+            <!-- User items will be added here -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <!-- Modal -->
+  <div id="modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+    <div class="bg-white rounded-lg shadow-lg w-full max-w-md p-6">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-xl font-semibold text-corona-dark" id="modal-title">Agregar Usuario</h3>
+        <button id="close-modal-btn" class="text-gray-400 hover:text-gray-600">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <form id="modal-form" class="space-y-4">
+        <div>
+          <label for="modal-name" class="block text-gray-700 font-semibold mb-1">Nombre Completo</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
+              <i class="fas fa-user"></i>
+            </span>
+            <input type="text" id="modal-name" required 
+              class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-corona-gold" 
+              placeholder="Ej. Juan Pérez" />
+          </div>
+        </div>
+        <div>
+          <label for="modal-email" class="block text-gray-700 font-semibold mb-1">Correo Electrónico</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
+              <i class="fas fa-envelope"></i>
+            </span>
+            <input type="email" id="modal-email" required 
+              class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-corona-gold" 
+              placeholder="Ej. juan@corona.com" />
+          </div>
+        </div>
+        <div>
+          <label for="modal-role" class="block text-gray-700 font-semibold mb-1">Rol del Usuario</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
+              <i class="fas fa-user-tag"></i>
+            </span>
+            <select id="modal-role" required 
+              class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-corona-gold appearance-none">
+              <option value="" disabled selected>Seleccione un rol</option>
+              <option value="Administrador">Administrador</option>
+              <option value="Vendedor">Vendedor</option>
+              <option value="Inventario">Inventario</option>
+            </select>
+            <span class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 pointer-events-none">
+              <i class="fas fa-chevron-down"></i>
+            </span>
+          </div>
+        </div>
+        <div class="flex justify-end gap-4 mt-6">
+          <button type="button" id="cancel-btn" 
+            class="px-4 py-2 rounded border border-gray-300 hover:bg-gray-100 transition">
+            Cancelar
+          </button>
+          <button type="submit" 
+            class="bg-corona-dark text-white px-4 py-2 rounded hover:bg-corona-dark/80 transition">
+            Guardar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Get DOM elements
+    const userItems = document.getElementById('user-items');
+    const addUserBtn = document.getElementById('add-user-btn');
+    const modal = document.getElementById('modal');
+    const modalForm = document.getElementById('modal-form');
+    const modalTitle = document.getElementById('modal-title');
+    const closeModalBtn = document.getElementById('close-modal-btn');
+    const cancelBtn = document.getElementById('cancel-btn');
+    const modalName = document.getElementById('modal-name');
+    const modalEmail = document.getElementById('modal-email');
+    const modalRole = document.getElementById('modal-role');
+
+    // Initialize users from localStorage
+    let users = JSON.parse(localStorage.getItem('users') || '[]');
+    let editIndex = null;
+
+    function renderUsers() {
+      userItems.innerHTML = '';
+      users.forEach((user, index) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td class="px-4 py-3">${user.name}</td>
+          <td class="px-4 py-3">${user.email}</td>
+          <td class="px-4 py-3">
+            <span class="px-2 py-1 bg-corona-gold/10 text-corona-dark rounded-full text-sm">
+              ${user.role}
+            </span>
+          </td>
+          <td class="px-4 py-3 space-x-2">
+            <button class="text-corona-dark hover:text-corona-dark/80" aria-label="Editar usuario" onclick="editUser(${index})">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button class="text-red-600 hover:text-red-800" aria-label="Eliminar usuario" onclick="deleteUser(${index})">
+              <i class="fas fa-trash-alt"></i>
+            </button>
+          </td>
+        `;
+        userItems.appendChild(tr);
+      });
+      
+      // Save to localStorage
+      localStorage.setItem('users', JSON.stringify(users));
+    }
+
+    function openModal(edit = false) {
+      modal.classList.remove('hidden');
+      if (edit) {
+        modalTitle.textContent = 'Editar Usuario';
+      } else {
+        modalTitle.textContent = 'Agregar Usuario';
+        modalForm.reset();
+      }
+      modalName.focus();
+    }
+
+    function closeModal() {
+      modal.classList.add('hidden');
+      editIndex = null;
+    }
+
+    addUserBtn.addEventListener('click', () => openModal());
+    closeModalBtn.addEventListener('click', () => closeModal());
+
+    cancelBtn.addEventListener('click', () => closeModal());
+
+    modalForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = modalName.value.trim();
+      const email = modalEmail.value.trim();
+      const role = modalRole.value;
+
+      if (!name || !email || !role) {
+        alert('Por favor, complete todos los campos correctamente.');
+        return;
+      }
+
+      if (editIndex !== null) {
+        users[editIndex] = { name, email, role };
+      } else {
+        users.push({ name, email, role });
+      }
+
+      renderUsers();
+      closeModal();
+    });
+
+    function editUser(index) {
+      editIndex = index;
+      const user = users[index];
+      modalName.value = user.name;
+      modalEmail.value = user.email;
+      modalRole.value = user.role;
+      openModal(true);
+    }
+
+    function deleteUser(index) {
+      if (confirm('¿Está seguro que desea eliminar este usuario?')) {
+        users.splice(index, 1);
+        renderUsers();
+      }
+    }
+
+    renderUsers();
+  </script>
+</body>
+</html>
